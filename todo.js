@@ -15,11 +15,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
+const addTaskBtn = document.querySelector("#addTaskBtn")
 
 document.addEventListener("DOMContentLoaded", function () {
     loadTasksFromLocalStorage();
 });
 
+addTaskBtn.addEventListener("click", addTask)
 function addTask() {
     var taskInput = document.getElementById("taskInput");
     var taskList = document.getElementById("taskList");

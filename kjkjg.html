@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 40px;
+        }
+
+        .card {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .card-header {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .card-title {
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            color: #007bff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 9999;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loader-wrapper">
+        <div class="loader"></div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab"
+                                    aria-controls="login" aria-selected="true">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="signup-tab" data-toggle="tab" href="#signup" role="tab"
+                                    aria-controls="signup" aria-selected="false">Signup</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="login" role="tabpanel"
+                                aria-labelledby="login-tab">
+                                <h4 class="card-title text-center">Login</h4>
+                                <form id="loginForm" onsubmit="return false">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Email Address</label>
+                                        <input type="email" class="form-control" id="loginEmail"
+                                            aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Password</label>
+                                        <input type="password" class="form-control" id="loginPassword"
+                                            name="loginPassword">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Login</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="signup" role="tabpanel" aria-labelledby="signup-tab">
+                                <h4 class="card-title text-center">Signup</h4>
+                                <form id="signupForm" onsubmit="return false">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Full Name</label>
+                                        <input type="text" class="form-control" id="fullName"
+                                            aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Email Address</label>
+                                        <input type="email" class="form-control" id="signupEmail"
+                                            aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Password</label>
+                                        <input type="password" class="form-control" id="signupPassword"
+                                            name="signupPassword">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block"
+                                        id="signUpBtn">Signup</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDKqn64ZCViCW2wwC-39qSSpwNx3NRwhk",
+            authDomain: "todo-app-c551b.firebaseapp.com",
+            projectId: "todo-app-c551b",
+            storageBucket: "todo-app-c551b.appspot.com",
+            messagingSenderId: "670237277297",
+            appId: "1:670237277297:web:aec41b689c238fcb8e6fd0"
+        };
+
+        // // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
+
+        const signupBtn = document.querySelector("#signUpBtn")
+        signupBtn.addEventListener("click", signUp)
+
+        async function signUp(e) {
+            try {
+                const loaderWrapper = document.querySelector(".loader-wrapper");
+                loaderWrapper.style.display = "block";
+                const fullName = document.getElementById("fullName").value;
+                const email = document.getElementById("signupEmail").value;
+                const password = document.getElementById("signupPassword").value;
+
+                const userAuth = await createUserWithEmailAndPassword(auth, email, password)
+                console.log(userAuth.user.uid);
+                const uid = userAuth.user.uid
+                const userObj = {
+                    fullName,
+                    email: email,
+                    accountActivate: true,
+                    uid
+                }
+                const userRef = doc(db, "users", uid);
+                const userDB = await setDoc(userRef, userObj)
+                loaderWrapper.style.display = "none";
+                console.log("userDB", userDB);
+                console.log("userObj", userObj);
+
+                window.location.assign("/todoApp.html")
+            }
+            catch (error) {
+                loaderWrapper.style.display = "none";
+                console.log("error", error.message);
+            }
+
+        }
+
+        const loginBtn = document.querySelector("#loginBtn")
+        loginBtn.addEventListener("click", login)
+        async function login(e) {
+            try {
+                const loaderWrapper = document.querySelector(".loader-wrapper");
+                loaderWrapper.style.display = "block";
+                const email = document.getElementById("loginEmail").value;
+                const password = document.getElementById("loginPassword").value;
+                console.log("email", email, "password", password);
+                const userLogin = await signInWithEmailAndPassword(auth, email, password)
+                console.log(userLogin);
+                localStorage.setItem("userUid", userLogin.user.uid)
+                loaderWrapper.style.display = "none";
+                window.location.replace("/todoApp.html")
+
+            }
+            catch (error) {
+                loaderWrapper.style.display = "none";
+                console.log("error", error.message);
+            }
+
+        }
+    </script>
+</body>
+
+</html>
