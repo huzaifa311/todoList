@@ -76,6 +76,17 @@
         li {
             font-size: 20px;
         }
+
+        #addTaskBtn {
+
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: green;
+            color: white;
+            height: 50px;
+            width: 85px;
+        }
     </style>
 </head>
 
@@ -84,7 +95,7 @@
         <h1 class="text-center mb-4">To-Do List</h1>
         <div class="input-group mb-3" id="container">
             <input type="text" id="taskInput" class="form-control" placeholder="Enter a task">
-            <button class="btn btn-primary" id="addTaskBtn">Add Task</button>
+            <button id="addTaskBtn">Add Task</button>
         </div>
         <ul id="taskList" class="list-group"></ul>
     </div>
@@ -94,7 +105,61 @@
     <!-- Add Bootstrap JS and Popper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
-    <script type="module" src="todo.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDKqn64ZCViCW2wwC-39qSSpwNx3NRwhk",
+            authDomain: "todo-app-c551b.firebaseapp.com",
+            projectId: "todo-app-c551b",
+            storageBucket: "todo-app-c551b.appspot.com",
+            messagingSenderId: "670237277297",
+            appId: "1:670237277297:web:aec41b689c238fcb8e6fd0"
+        };
+
+        // // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
+        const user = auth.currentUser;
+        const addTaskBtn = document.querySelector("#addTaskBtn")
+
+        document.addEventListener("DOMContentLoaded", function () {
+            loadTasksFromLocalStorage();
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/auth.user
+                const uid = user.uid;
+                console.log("uid", uid);
+                // ...
+            } else {
+                console.log("user is not logged in");
+                // User is signed out
+                // ...
+            }
+        });
+
+
+        const logoutBtn = document.querySelector("#logoutBtn")
+        logoutBtn.addEventListener("click", logOut)
+
+        async function logOut(e) {
+            e.preventDefault;
+            signOut(auth).then(() => {
+                console.log("Sign-out successful.");
+                window.location.assign("/kjkjg.html")
+            }).catch((error) => {
+                console.log("error", error.message);
+                // An error happened.
+            });
+        }
+    </script>
+    <script src="todo.js"></script>
 </body>
 
 </html>

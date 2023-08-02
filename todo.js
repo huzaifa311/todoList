@@ -1,25 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBDKqn64ZCViCW2wwC-39qSSpwNx3NRwhk",
-    authDomain: "todo-app-c551b.firebaseapp.com",
-    projectId: "todo-app-c551b",
-    storageBucket: "todo-app-c551b.appspot.com",
-    messagingSenderId: "670237277297",
-    appId: "1:670237277297:web:aec41b689c238fcb8e6fd0"
-};
-
-// // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth();
-const addTaskBtn = document.querySelector("#addTaskBtn")
-
-document.addEventListener("DOMContentLoaded", function () {
-    loadTasksFromLocalStorage();
-});
 
 addTaskBtn.addEventListener("click", addTask)
 function addTask() {
@@ -114,18 +93,4 @@ function loadTasksFromLocalStorage() {
             taskList.appendChild(taskItem);
         }
     }
-}
-
-const logoutBtn = document.querySelector("#logoutBtn")
-logoutBtn.addEventListener("click", logOut)
-
-async function logOut(e) {
-    e.preventDefault;
-    signOut(auth).then(() => {
-       console.log( "Sign-out successful.");
-       window.location.assign("/index.html")
-    }).catch((error) => {
-        console.log("error" , error.message);
-        // An error happened.
-    });
 }
